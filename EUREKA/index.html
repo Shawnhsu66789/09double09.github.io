@@ -5,18 +5,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>你的大腦有多「泰」？聚餐人格測驗 2.0</title>
+    <title>你的大腦有多「泰」？聚餐人格測驗</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #1a1a2e; color: white; font-family: 'Noto Sans TC', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; width: 100%; max-width: 500px; padding: 30px; }
-        .btn { width: 100%; padding: 15px; margin-bottom: 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; text-align: left; transition: 0.3s; font-size: 14px; line-height: 1.5; }
-        .btn:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); border-color: #fbbf24; }
-        .progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-bottom: 20px; }
-        .progress-bar { height: 100%; background: #fbbf24; transition: width 0.3s; }
-        .result-img-container { width: 100%; display: flex; justify-content: center; margin: 20px 0; }
-        .result-img { width: 100%; max-width: 320px; height: auto; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); border: 2px solid rgba(251, 191, 36, 0.3); }
-        .result-card { background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 15px; margin: 20px 0; border-radius: 0 12px 12px 0; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; width: 100%; max-width: 500px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .btn { width: 100%; padding: 16px; margin-bottom: 12px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; text-align: left; transition: 0.3s; font-size: 15px; line-height: 1.5; }
+        .btn:hover { background: rgba(251, 191, 36, 0.2); transform: translateY(-2px); border-color: #fbbf24; }
+        .progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-bottom: 25px; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #f59e0b, #fbbf24); transition: width 0.4s ease-out; border-radius: 3px; }
+        /* 結果頁純圖片容器 */
+        .result-container { display: flex; flex-direction: column; align-items: center; }
+        .result-image-box { width: 100%; margin-bottom: 20px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .result-image-box img { width: 100%; height: auto; display: block; }
     </style>
 </head>
 <body>
@@ -37,15 +38,6 @@
             { q: "Q10. 收到朋友私訊說「今天謝謝主揪」，你會？", a: "回個貼圖，或簡單回句：「OK」", b: "回傳：「不會不會，大家開心最重要！」", c: "順勢把剛剛修好的大合照傳到群組。", d: "反覆推敲：這句是真心還是客套？我有招待不周嗎？", scores: [1,2,3,4] }
         ];
 
-        const results = [
-            { range: [10, 15], title: "冠軍月亮蝦餅人", desc: "你是典型的「想太少」，直率行動派！在你眼裡，猶豫就是對食物的不尊重，直覺就是你的指南針。", match: "Type F 濃郁綠咖哩人", type: "A" },
-            { range: [16, 21], title: "清香檸檬魚人", desc: "口頭禪是「都好、看你們」，溫柔隨和的和平主義者。你不是沒主見，只是更在乎大家的和諧。", match: "Type E 黃咖哩軟殼蟹人", type: "B" },
-            { range: [22, 27], title: "泰式奶茶人", desc: "情商極高的社交高手，聚餐中的氣氛擔當。你能精準讀懂空氣，讓每個人都感到被照顧。", match: "Type D 冬蔭功湯人", type: "C" },
-            { range: [28, 32], title: "冬蔭功湯人", desc: "愛恨分明、充滿感官主義。你雖然敏感，但那是因為你對世界充滿熱情，擁有鮮明的個性特質。", match: "Type C 泰式奶茶人", type: "D" },
-            { range: [33, 37], title: "黃咖哩軟殼蟹人", desc: "追求完美的細節控計畫通。外剛內柔，雖然有時顯得嚴肅，其實是為了確保大家都不踩雷。", match: "Type B 清香檸檬魚人", type: "E" },
-            { range: [38, 40], title: "濃郁綠咖哩人", desc: "恭喜獲得「想泰多」冠軍！內心戲炸裂，後勁強烈。你是最貼心但也最讓人心疼的朋友。", match: "Type A 冠軍月亮蝦餅人", type: "F" }
-        ];
-
         let current = 0;
         let score = 0;
 
@@ -55,36 +47,41 @@
                 const q = questions[current];
                 el.innerHTML = `
                     <div class="progress-container"><div class="progress-bar" style="width:${(current/questions.length)*100}%"></div></div>
-                    <p class="text-xs text-amber-400 font-bold mb-2 text-center tracking-widest uppercase">Question ${current + 1}</p>
-                    <h2 class="text-lg font-bold mb-6 text-center leading-relaxed">${q.q}</h2>
+                    <p class="text-xs text-amber-400 font-bold mb-2 tracking-widest uppercase">Question ${current + 1}</p>
+                    <h2 class="text-lg font-bold mb-6 leading-relaxed">${q.q}</h2>
                     <button class="btn" onclick="next(0)">${q.a}</button>
                     <button class="btn" onclick="next(1)">${q.b}</button>
                     <button class="btn" onclick="next(2)">${q.c}</button>
                     <button class="btn" onclick="next(3)">${q.d}</button>
                 `;
             } else {
-                const res = results.find(r => score >= r.range[0] && score <= r.range[1]);
-                el.innerHTML = `
-                    <div class="text-center">
-                        <p class="text-amber-400 font-bold mb-1 tracking-widest">聚餐人格分析結果</p>
-                        <h1 class="text-3xl font-black mb-4">${res.title}</h1>
-                        
-                        <div class="result-img-container">
-                            <img src="imgs/results/result_${res.type}.png" alt="${res.title}" class="result-img" onerror="console.log('找不到圖片：' + this.src)">
-                        </div>
+                const typeMap = ["A","A","B","C","D","E","F"];
+                const scoreRanges = [15, 21, 27, 32, 37, 40];
+                let type = "F";
+                for(let i=0; i<scoreRanges.length; i++){
+                    if(score <= scoreRanges[i]){ type = typeMap[i]; break; }
+                }
 
-                        <div class="result-card text-sm leading-relaxed text-left">
-                            ${res.desc}
+                // 清空文字，只顯示整合後的結果大圖
+                el.innerHTML = `
+                    <div class="result-container">
+                        <div class="result-image-box">
+                            <img src="imgs/results/result_${type}.png" alt="結果圖" id="resImg" onerror="tryFixPath(this)">
                         </div>
-                        
-                        <div class="p-4 bg-white/5 rounded-lg border border-white/10 mt-4 text-left">
-                            <p class="text-xs opacity-50 mb-1">【 靈魂飯友配對 】</p>
-                            <p class="font-bold text-pink-400 text-lg">${res.match}</p>
-                        </div>
-                        
-                        <button onclick="location.reload()" class="mt-8 w-full py-4 bg-amber-500 hover:bg-amber-400 text-white rounded-xl font-bold transition shadow-lg">重新測驗</button>
+                        <button onclick="location.reload()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-white rounded-xl font-bold transition shadow-lg">再測一次</button>
+                        <p class="mt-4 text-[10px] opacity-30">長按圖片可儲存分享</p>
                     </div>
                 `;
+            }
+        }
+
+        // 強力路徑修正器：如果 imgs/results/ 失敗，嘗試 img/ 或 /imgs/
+        function tryFixPath(img) {
+            console.log("嘗試修正路徑...");
+            if (img.src.includes('imgs/results/')) {
+                img.src = img.src.replace('imgs/results/', 'img/');
+            } else if (img.src.includes('img/')) {
+                img.src = img.src.replace('img/', 'results/');
             }
         }
 
