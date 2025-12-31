@@ -8,63 +8,92 @@
     <title>你的大腦有多「泰」？聚餐人格測驗</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 全螢幕背景設定 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+
         body { 
             background: url('imgs/Cover.png') no-repeat center center fixed; 
             background-size: cover; 
             color: white; 
             font-family: 'Noto Sans TC', sans-serif; 
             min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 20px;
             margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .glass { 
+
+        /* 測驗中與結果頁的毛玻璃容器 */
+        .quiz-container { 
             background: rgba(26, 26, 46, 0.85); 
-            backdrop-filter: blur(10px); 
+            backdrop-filter: blur(12px); 
             border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 24px; 
-            width: 100%; 
+            border-radius: 30px; 
+            width: 90%;
             max-width: 450px; 
-            padding: 30px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-            position: relative;
+            padding: 35px 25px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
         }
-        /* 進度條與大象圖示 */
-        .progress-wrapper { position: relative; width: 100%; height: 30px; margin-bottom: 30px; }
-        .progress-container { position: absolute; bottom: 0; width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; }
-        .progress-bar { height: 100%; background: #fbbf24; border-radius: 3px; transition: width 0.4s; }
+
+        /* 起始頁專用：不使用黑底容器 */
+        .start-page {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* 進度條設計 */
+        .progress-wrapper { position: relative; width: 100%; height: 45px; margin-bottom: 20px; }
+        .progress-container { position: absolute; bottom: 10px; width: 100%; height: 6px; background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #a78bfa, #f472b6); border-radius: 10px; transition: width 0.4s ease; }
         .elephant-icon { 
-            position: absolute; 
-            top: -10px; 
-            width: 35px; 
-            height: 35px; 
-            transition: left 0.4s; 
-            transform: translateX(-50%);
+            position: absolute; top: 0; width: 45px; height: 45px; 
+            transition: left 0.4s ease; transform: translateX(-50%); z-index: 5;
         }
-        /* 按鈕樣式 */
-        .btn { 
-            width: 100%; padding: 16px; margin-bottom: 12px; 
-            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); 
-            border-radius: 12px; text-align: center; transition: 0.3s; font-size: 16px; font-weight: 500;
+
+        /* 紫色動態按鈕 */
+        .btn-purple {
+            width: 100%; padding: 16px; margin-bottom: 15px;
+            background: rgba(167, 139, 250, 0.2);
+            border: 2px solid rgba(167, 139, 250, 0.5);
+            border-radius: 16px; color: #ddd6fe; font-size: 16px; font-weight: 500;
+            transition: all 0.3s ease;
         }
-        .btn:hover { background: #fbbf24; color: #1a1a2e; transform: translateY(-2px); }
-        /* 圖片容器 */
-        .img-box { width: 100%; margin-bottom: 20px; border-radius: 15px; overflow: hidden; }
-        .img-box img { width: 100%; height: auto; }
-        .logo-footer { width: 100px; margin: 20px auto 0; opacity: 0.8; }
+        .btn-purple:hover {
+            background: rgba(167, 139, 250, 0.4);
+            border-color: #c084fc;
+            color: white;
+            transform: scale(1.03);
+        }
+
+        /* 起始與重新開始按鈕：帶有呼吸動畫 */
+        .btn-action {
+            background: #a78bfa; color: #1e1b4b; font-weight: bold; padding: 18px 40px;
+            border-radius: 50px; border: none; font-size: 18px; cursor: pointer;
+            animation: pulse 2s infinite; transition: 0.3s;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(167, 139, 250, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); }
+        }
+        .btn-action:hover { background: #c084fc; transform: translateY(-3px); }
+
+        .logo-top { width: 140px; margin-bottom: 40px; }
+        .title-img { width: 100%; max-width: 380px; margin-bottom: 50px; }
+        .result-img { width: 100%; border-radius: 20px; margin-bottom: 25px; }
+        .logo-bottom { width: 110px; margin-top: 30px; opacity: 0.8; }
     </style>
 </head>
 <body>
-    <div id="app" class="glass">
-        <div class="text-center">
-            <div class="img-box">
-                <img src="imgs/title.png" alt="主視覺標題">
-            </div>
-            <p class="mb-8 opacity-80 leading-relaxed text-sm">點餐想太多？聚餐選不出來？<br>測測看你的大腦到底多「泰」！</p>
-            <button onclick="startQuiz()" class="btn" style="background: #fbbf24; color: #1a1a2e; font-weight: bold; border: none;">開始測驗</button>
+    <div id="app" class="w-full flex justify-center">
+        <div class="start-page">
+            <img src="imgs/logo 2.svg" class="logo-top" alt="Logo Top">
+            <img src="imgs/title.png" class="title-img" alt="Title">
+            <button onclick="startQuiz()" class="btn-action">開始測驗</button>
         </div>
     </div>
 
@@ -93,21 +122,24 @@
 
         function render() {
             const el = document.getElementById('app');
+            const progress = (current / questions.length) * 100;
+
             if (current < questions.length) {
                 const q = questions[current];
-                const progress = (current / questions.length) * 100;
                 el.innerHTML = `
-                    <div class="progress-wrapper">
-                        <img src="imgs/elephant.png" class="elephant-icon" style="left: ${progress}%">
-                        <div class="progress-container">
-                            <div class="progress-bar" style="width: ${progress}%"></div>
+                    <div class="quiz-container">
+                        <div class="progress-wrapper">
+                            <img src="imgs/elephant.png" class="elephant-icon" style="left: ${progress}%">
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: ${progress}%"></div>
+                            </div>
                         </div>
+                        <h2 class="text-xl font-bold mb-8 text-center text-purple-100 leading-relaxed">${q.q}</h2>
+                        <button class="btn-purple" onclick="next(0)">${q.a}</button>
+                        <button class="btn-purple" onclick="next(1)">${q.b}</button>
+                        <button class="btn-purple" onclick="next(2)">${q.c}</button>
+                        <button class="btn-purple" onclick="next(3)">${q.d}</button>
                     </div>
-                    <h2 class="text-xl font-bold mb-8 text-center leading-relaxed">${q.q}</h2>
-                    <button class="btn" onclick="next(0)">${q.a}</button>
-                    <button class="btn" onclick="next(1)">${q.b}</button>
-                    <button class="btn" onclick="next(2)">${q.c}</button>
-                    <button class="btn" onclick="next(3)">${q.d}</button>
                 `;
             } else {
                 const types = ["A","B","C","D","E","F"];
@@ -118,12 +150,12 @@
                 }
 
                 el.innerHTML = `
-                    <div class="text-center">
-                        <div class="img-box shadow-2xl">
-                            <img src="imgs/results/result_${type}.png" alt="測驗結果">
+                    <div class="quiz-container text-center">
+                        <img src="imgs/results/result_${type}.png" class="result-img shadow-2xl" alt="結果圖">
+                        <button onclick="location.reload()" class="btn-action">再玩一次</button>
+                        <div class="flex justify-center">
+                            <img src="imgs/logo 2.svg" class="logo-bottom" alt="Footer Logo">
                         </div>
-                        <button onclick="location.reload()" class="btn" style="background: #fbbf24; color: #1a1a2e; font-weight: bold; border: none;">重新測驗</button>
-                        <img src="imgs/logo 2.svg" class="logo-footer" alt="饗泰多 Logo">
                     </div>
                 `;
             }
