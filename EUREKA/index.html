@@ -8,19 +8,65 @@
     <title>你的大腦有多「泰」？聚餐人格測驗</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #1a1a2e; color: white; font-family: 'Noto Sans TC', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; width: 100%; max-width: 500px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .btn { width: 100%; padding: 16px; margin-bottom: 12px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; text-align: left; transition: 0.3s; font-size: 15px; line-height: 1.5; }
-        .btn:hover { background: rgba(251, 191, 36, 0.2); transform: translateY(-2px); border-color: #fbbf24; }
-        .progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-bottom: 25px; }
-        .progress-bar { height: 100%; background: linear-gradient(90deg, #f59e0b, #fbbf24); transition: width 0.4s ease-out; border-radius: 3px; }
-        .result-container { display: flex; flex-direction: column; align-items: center; }
-        .result-image-box { width: 100%; margin-bottom: 20px; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); background: rgba(255,255,255,0.05); min-height: 300px; display: flex; align-items: center; justify-content: center;}
-        .result-image-box img { width: 100%; height: auto; display: block; }
+        /* 全螢幕背景設定 */
+        body { 
+            background: url('imgs/Cover.png') no-repeat center center fixed; 
+            background-size: cover; 
+            color: white; 
+            font-family: 'Noto Sans TC', sans-serif; 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px;
+            margin: 0;
+        }
+        .glass { 
+            background: rgba(26, 26, 46, 0.85); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 24px; 
+            width: 100%; 
+            max-width: 450px; 
+            padding: 30px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            position: relative;
+        }
+        /* 進度條與大象圖示 */
+        .progress-wrapper { position: relative; width: 100%; height: 30px; margin-bottom: 30px; }
+        .progress-container { position: absolute; bottom: 0; width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; }
+        .progress-bar { height: 100%; background: #fbbf24; border-radius: 3px; transition: width 0.4s; }
+        .elephant-icon { 
+            position: absolute; 
+            top: -10px; 
+            width: 35px; 
+            height: 35px; 
+            transition: left 0.4s; 
+            transform: translateX(-50%);
+        }
+        /* 按鈕樣式 */
+        .btn { 
+            width: 100%; padding: 16px; margin-bottom: 12px; 
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); 
+            border-radius: 12px; text-align: center; transition: 0.3s; font-size: 16px; font-weight: 500;
+        }
+        .btn:hover { background: #fbbf24; color: #1a1a2e; transform: translateY(-2px); }
+        /* 圖片容器 */
+        .img-box { width: 100%; margin-bottom: 20px; border-radius: 15px; overflow: hidden; }
+        .img-box img { width: 100%; height: auto; }
+        .logo-footer { width: 100px; margin: 20px auto 0; opacity: 0.8; }
     </style>
 </head>
 <body>
-    <div id="quiz" class="glass"></div>
+    <div id="app" class="glass">
+        <div class="text-center">
+            <div class="img-box">
+                <img src="imgs/title.png" alt="主視覺標題">
+            </div>
+            <p class="mb-8 opacity-80 leading-relaxed text-sm">點餐想太多？聚餐選不出來？<br>測測看你的大腦到底多「泰」！</p>
+            <button onclick="startQuiz()" class="btn" style="background: #fbbf24; color: #1a1a2e; font-weight: bold; border: none;">開始測驗</button>
+        </div>
+    </div>
 
     <script>
         const questions = [
@@ -39,67 +85,55 @@
         let current = 0;
         let score = 0;
 
-        function show() {
-            const el = document.getElementById('quiz');
+        function startQuiz() {
+            current = 0;
+            score = 0;
+            render();
+        }
+
+        function render() {
+            const el = document.getElementById('app');
             if (current < questions.length) {
                 const q = questions[current];
+                const progress = (current / questions.length) * 100;
                 el.innerHTML = `
-                    <div class="progress-container"><div class="progress-bar" style="width:${(current/questions.length)*100}%"></div></div>
-                    <p class="text-xs text-amber-400 font-bold mb-2 tracking-widest uppercase">Question ${current + 1}</p>
-                    <h2 class="text-lg font-bold mb-6 leading-relaxed">${q.q}</h2>
+                    <div class="progress-wrapper">
+                        <img src="imgs/elephant.png" class="elephant-icon" style="left: ${progress}%">
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+                    <h2 class="text-xl font-bold mb-8 text-center leading-relaxed">${q.q}</h2>
                     <button class="btn" onclick="next(0)">${q.a}</button>
                     <button class="btn" onclick="next(1)">${q.b}</button>
                     <button class="btn" onclick="next(2)">${q.c}</button>
                     <button class="btn" onclick="next(3)">${q.d}</button>
                 `;
             } else {
-                const scoreRanges = [15, 21, 27, 32, 37, 40];
                 const types = ["A","B","C","D","E","F"];
+                const scoreRanges = [15, 21, 27, 32, 37, 40];
                 let type = "F";
                 for(let i=0; i<scoreRanges.length; i++){
                     if(score <= scoreRanges[i]){ type = types[i]; break; }
                 }
 
                 el.innerHTML = `
-                    <div class="result-container">
-                        <div class="result-image-box">
-                            <img src="imgs/results/result_${type}.png" id="finalImg" alt="結果生成中...">
+                    <div class="text-center">
+                        <div class="img-box shadow-2xl">
+                            <img src="imgs/results/result_${type}.png" alt="測驗結果">
                         </div>
-                        <button onclick="location.reload()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-white rounded-xl font-bold transition shadow-lg">再測一次</button>
+                        <button onclick="location.reload()" class="btn" style="background: #fbbf24; color: #1a1a2e; font-weight: bold; border: none;">重新測驗</button>
+                        <img src="imgs/logo 2.svg" class="logo-footer" alt="饗泰多 Logo">
                     </div>
                 `;
-
-                // 核心路徑修正邏輯：如果預設路徑失敗，嘗試多種可能性
-                const imgEl = document.getElementById('finalImg');
-                imgEl.onerror = function() {
-                    const paths = [
-                        `imgs/results/result_${type}.png`,
-                        `EUREKA/imgs/results/result_${type}.png`,
-                        `img/result_${type}.png`,
-                        `result_${type}.png`
-                    ];
-                    let currentPathIndex = 0;
-                    
-                    const tryNext = () => {
-                        if (currentPathIndex < paths.length) {
-                            console.log("嘗試新路徑:", paths[currentPathIndex]);
-                            imgEl.src = paths[currentPathIndex++];
-                        } else {
-                            imgEl.alt = "圖片載入失敗，請檢查資料夾路徑與檔名是否為 result_" + type + ".png";
-                            imgEl.onerror = null;
-                        }
-                    };
-                    tryNext();
-                };
             }
         }
 
         function next(idx) {
             score += questions[current].scores[idx];
             current++;
-            show();
+            render();
         }
-        show();
     </script>
 </body>
 </html>
