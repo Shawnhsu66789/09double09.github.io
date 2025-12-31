@@ -5,83 +5,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>你的大腦有多「泰」？聚餐人格測驗</title>
+    <title>你的大腦有多「泰」？聚餐人格測驗 2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: radial-gradient(circle, #1a1a2e 0%, #16213e 100%); color: white; font-family: sans-serif; min-height: 100vh; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; }
-        .option-btn { transition: all 0.3s; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .option-btn:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
-        .progress-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
-        .progress-inner { height: 100%; background: #fbbf24; transition: width 0.3s; }
+        body { background: #1a1a2e; color: white; font-family: 'Noto Sans TC', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; width: 100%; max-width: 500px; padding: 30px; }
+        .btn { width: 100%; padding: 15px; margin-bottom: 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; text-align: left; transition: 0.3s; font-size: 14px; line-height: 1.5; }
+        .btn:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); border-color: #fbbf24; }
+        .progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-bottom: 20px; }
+        .progress-bar { height: 100%; background: #fbbf24; transition: width 0.3s; }
+        .result-card { background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 15px; margin: 20px 0; border-radius: 0 12px 12px 0; }
     </style>
 </head>
-<body class="flex items-center justify-center p-4">
-    <div id="quiz-app" class="glass max-w-lg w-full p-8 shadow-2xl">
+<body>
+    <div id="quiz" class="glass">
         </div>
 
     <script>
         const questions = [
-            { q: "Q1. 選餐廳時群組一片死寂，你會？", options: [{t:"直接丟出這家：就吃饗泰多吧！", s:1}, {t:"默默潛水，等熱心人主導", s:2}, {t:"丟出兩個選項發起投票", s:3}, {t:"焦慮大家是不是不想去", s:4}] },
-            { q: "Q2. 點了中辣但你不太能吃辣，你會？", options: [{t:"沒差點下去！大不了狂喝水", s:1}, {t:"看大家能不能吃，我跟著吃", s:2}, {t:"詢問店員能否做微辣", s:3}, {t:"腦中瘋狂運算會不會脫妝痛肚子", s:4}] },
-            { q: "Q3. 發現你是唯一沒拿手機拍照的人，你會？", options: [{t:"直接夾肉：餓死了你們慢慢拍", s:1}, {t:"尷尬放下筷子等大家拍完", s:2}, {t:"主動打燈喬角度當攝影指導", s:3}, {t:"內心驚慌是不是顯得不合群", s:4}] },
-            { q: "Q4. 服務生送錯菜了，你會？", options: [{t:"沒差啦！這道也好吃就吃吧", s:1}, {t:"看大家反應，沒人講話就默默吃", s:2}, {t:"禮貌提醒送錯了，請確認帳單", s:3}, {t:"不敢講怕服務生被罵或朋友不開心", s:4}] },
-            { q: "Q5. 朋友抱怨工作氣氛沉重，你會？", options: [{t:"轉移話題：欸這蝦餅超厚！", s:1}, {t:"點頭附和：真的辛苦了～繼續吃", s:2}, {t:"講自己更慘的故事來緩和氣氛", s:3}, {t:"擔心輪到自己講會不會被比較", s:4}] },
-            { q: "Q6. 剩最後一塊月亮蝦餅，你會？", options: [{t:"沒人要吃喔？那我吃囉！", s:1}, {t:"想吃也不敢夾，推說飽了", s:2}, {t:"用公筷切成四份大家平分", s:3}, {t:"想夾又怕被覺得貪吃，不夾又浪費", s:4}] },
-            { q: "Q7. 結帳發現比預期貴了200元，你會？", options: [{t:"直接付掉，好吃再賺就有", s:1}, {t:"心痛但不敢表現，默默付錢", s:2}, {t:"快速檢查帳單有沒有算錯", s:3}, {t:"回家路上一直想早知道不點椰子汁", s:4}] },
-            { q: "Q8. 隔壁桌客人講話超級大聲，你會？", options: [{t:"直接瞪過去或講話比他們大聲", s:1}, {t:"忍耐，把身體前傾聽朋友說話", s:2}, {t:"請服務生幫忙提醒隔壁桌", s:3}, {t:"煩躁想是不是選錯餐廳大家不盡興", s:4}] },
-            { q: "Q9. 解散時大家說「下次再約」，你心想？", options: [{t:"下次去吃火鍋！", s:1}, {t:"好喔～（知道下次可能是半年後）", s:2}, {t:"立刻開行事曆問下個月哪天有空", s:3}, {t:"剛剛揮手姿勢是不是太僵硬很假", s:4}] },
-            { q: "Q10. 收到朋友傳訊說謝謝主揪，你會？", options: [{t:"回個貼圖或「OK」", s:1}, {t:"回傳「不會不會大家開心就好」", s:2}, {t:"順勢把修好的合照傳到群組", s:3}, {t:"檢查這句話是不是客套，有招待不周？", s:4}] }
+            { q: "Q1. 好不容易約好聚餐，但在選餐廳時群組一片死寂，你會？", a: "直接丟出這家：「就吃饗泰多吧，我想吃！」", b: "默默潛水，想說應該會有更熱心的人出來主導吧？", c: "丟出兩個不同風格的選項發起投票，看大家反應。", d: "開始焦慮大家是不是不想去？還是我上次推薦的太難吃？", scores: [1,2,3,4] },
+            { q: "Q2. 點餐時，綠咖哩標示兩根辣椒(中辣)，但你不太能吃辣，你會？", a: "可以點啊，但我不會吃，哼~", b: "看其他朋友能不能吃，我跟著大家就好。", c: "詢問店員：「這道可以做微辣嗎？」", d: "腦中瘋狂運算：會不會拉肚子？會不會顯得我很挑剔？", scores: [1,2,3,4] },
+            { q: "Q3. 菜上齊了發現你是唯一沒拿手機拍照的人，你會？", a: "直接夾肉：「餓死了你們慢慢拍，這塊我要了！」", b: "尷尬放下筷子，低頭玩手機等大家拍完。", c: "主動幫忙打燈或喬角度，當攝影指導。", d: "內心驚慌：我現在夾菜會不會顯得不合群？", scores: [1,2,3,4] },
+            { q: "Q4. 服務生送錯菜了，這道不是你們點的，你會？", a: "沒差啦！這道看起來也很好吃，就吃吧！", b: "看大家反應，如果沒人講話就默默吃掉。", c: "禮貌提醒服務生送錯了，並核對一下帳單。", d: "內心糾結：要講嗎？講了服務生會不會被扣錢？", scores: [1,2,3,4] },
+            { q: "Q5. 聚餐中朋友突然開始抱怨工作，氣氛變沉重，你會？", a: "強行轉移話題：「欸這蝦餅超厚！快趁熱吃！」", b: "點頭附和：「真的辛苦了～」然後繼續吃菜。", c: "適時講一個自己更慘的故事來緩和氣氛。", d: "擔心輪到自己講時，話題會不會變得很無聊？", scores: [1,2,3,4] },
+            { q: "Q6. 剩最後一塊月亮蝦餅，大家都停下筷子，你會？", a: "「沒人要吃喔？那我吃囉！」直接夾走。", b: "其實很想吃但不敢夾，推說：「我飽了。」", c: "用公筷把蝦餅切成四份，大家平分。", d: "想夾又怕被覺得貪吃，不夾又覺得浪費...", scores: [1,2,3,4] },
+            { q: "Q7. 結帳發現比預期貴了200元，你會？", a: "沒差啦！吃得爽最重要，錢再賺就有。", b: "心痛但不敢表現，默默掏出皮夾付錢。", c: "快速心算檢查帳單，確認是否有漏掉折扣。", d: "回家路上一直想：早知道就不多點那杯椰子汁了。", scores: [1,2,3,4] },
+            { q: "Q8. 隔壁桌客人講話超級大聲，吵到你們聊天，你會？", a: "直接瞪過去，或講話比他們更大聲。", b: "忍耐，把身體往前傾，努力聽朋友說話。", c: "請服務生幫忙提醒隔壁桌：「不好意思聲音小一點。」", d: "煩躁想：是不是我選錯餐廳了？大家一定很不開心。", scores: [1,2,3,4] },
+            { q: "Q9. 解散時大家說「下次再約」，你心想？", a: "「好啊！下次去吃火鍋！」(已經在想下一頓)", b: "「好喔～」(知道下次約成可能是半年後)", c: "立刻開行事曆問大家：「下個月哪天有空？」", d: "反省剛剛揮手姿勢是不是太僵硬？有沒有說錯話？", scores: [1,2,3,4] },
+            { q: "Q10. 收到朋友私訊說「今天謝謝主揪」，你會？", a: "回個貼圖，或簡單回句：「OK」", b: "回傳：「不會不會，大家開心最重要！」", c: "順勢把剛剛修好的大合照傳到群組。", d: "反覆推敲：這句是真心還是客套？我有招待不周嗎？", scores: [1,2,3,4] }
         ];
 
         const results = [
-            { range: [10, 15], type: "A", title: "冠軍月亮蝦餅人", desc: "你是典型的「想太少」，直率行動派！在你眼裡，猶豫就是對食物的不尊重。", match: "Type F 濃郁綠咖哩人" },
-            { range: [16, 21], type: "B", title: "清香檸檬魚人", desc: "口頭禪是「都好、看你們」，溫柔隨和的和平主義者。", match: "Type E 黃咖哩軟殼蟹人" },
-            { range: [22, 27], type: "C", title: "泰式奶茶人", desc: "情商極高的社交高手，聚餐中的氣氛擔當與潤滑劑。", match: "Type D 冬蔭功湯人" },
-            { range: [28, 32], type: "D", title: "冬蔭功湯人", desc: "愛恨分明、有個性，雖然敏感但充滿熱情的感官主義者。", match: "Type C 泰式奶茶人" },
-            { range: [33, 37], type: "E", title: "黃咖哩軟殼蟹人", desc: "追求完美的細節控計畫通，外剛內柔，確保大家不踩雷。", match: "Type B 清香檸檬魚人" },
-            { range: [38, 40], type: "F", title: "濃郁綠咖哩人", desc: "恭喜獲得「想泰多」冠軍！內心戲炸裂，細膩到讓人心疼。", match: "Type A 冠軍月亮蝦餅人" }
+            { range: [10, 15], title: "冠軍月亮蝦餅人", desc: "你是典型的「想太少」，直率行動派！在你眼裡，猶豫就是對食物的不尊重，直覺就是你的指南針。", match: "Type F 濃郁綠咖哩人", type: "A" },
+            { range: [16, 21], title: "清香檸檬魚人", desc: "口頭禪是「都好、看你們」，溫柔隨和的和平主義者。你不是沒主見，只是更在乎大家的和諧。", match: "Type E 黃咖哩軟殼蟹人", type: "B" },
+            { range: [22, 27], title: "泰式奶茶人", desc: "情商極高的社交高手，聚餐中的氣氛擔當。你能精準讀懂空氣，讓每個人都感到被照顧。", match: "Type D 冬蔭功湯人", type: "C" },
+            { range: [28, 32], title: "冬蔭功湯人", desc: "愛恨分明、充滿感官主義。你雖然敏感，但那是因為你對世界充滿熱情，擁有鮮明的個性特質。", match: "Type C 泰式奶茶人", type: "D" },
+            { range: [33, 37], title: "黃咖哩軟殼蟹人", desc: "追求完美的細節控計畫通。外剛內柔，雖然有時顯得嚴肅，其實是為了確保大家都不踩雷。", match: "Type B 清香檸檬魚人", type: "E" },
+            { range: [38, 40], title: "濃郁綠咖哩人", desc: "恭喜獲得「想泰多」冠軍！內心戲炸裂，後勁強烈。你是最貼心但也最讓人心疼的朋友。", match: "Type A 冠軍月亮蝦餅人", type: "F" }
         ];
 
-        let currentStep = 0;
+        let current = 0;
         let score = 0;
 
-        function render() {
-            const app = document.getElementById('quiz-app');
-            if (currentStep < questions.length) {
-                const item = questions[currentStep];
-                const progress = ((currentStep / questions.length) * 100);
-                app.innerHTML = `
-                    <div class="progress-bar mb-6"><div class="progress-inner" style="width: ${progress}%"></div></div>
-                    <p class="text-xs opacity-50 mb-2">QUESTION ${currentStep + 1} / 10</p>
-                    <h2 class="text-xl font-bold mb-6">${item.q}</h2>
-                    ${item.options.map(opt => `<button onclick="handleNext(${opt.s})" class="option-btn w-full p-4 mb-3 glass text-left text-sm hover:bg-white hover:text-black">${opt.t}</button>`).join('')}
+        function show() {
+            const el = document.getElementById('quiz');
+            if (current < questions.length) {
+                const q = questions[current];
+                el.innerHTML = `
+                    <div class="progress-container"><div class="progress-bar" style="width:${(current/questions.length)*100}%"></div></div>
+                    <p class="text-xs text-amber-400 font-bold mb-2">QUESTION ${current + 1}</p>
+                    <h2 class="text-lg font-bold mb-6 leading-tight">${q.q}</h2>
+                    <button class="btn" onclick="next(0)">${q.a}</button>
+                    <button class="btn" onclick="next(1)">${q.b}</button>
+                    <button class="btn" onclick="next(2)">${q.c}</button>
+                    <button class="btn" onclick="next(3)">${q.d}</button>
                 `;
             } else {
-                showResult();
+                const res = results.find(r => score >= r.range[0] && score <= r.range[1]);
+                el.innerHTML = `
+                    <p class="text-amber-400 font-bold mb-1">聚餐人格分析結果</p>
+                    <h1 class="text-3xl font-black mb-4">${res.title}</h1>
+                    <div class="result-card text-sm leading-relaxed">${res.desc}</div>
+                    <div class="p-4 bg-white/5 rounded-lg border border-white/10 mt-4">
+                        <p class="text-xs opacity-50 mb-1">【 靈魂飯友配對 】</p>
+                        <p class="font-bold text-pink-400 text-lg">${res.match}</p>
+                    </div>
+                    <button onclick="location.reload()" class="mt-8 w-full py-4 bg-amber-500 hover:bg-amber-400 text-white rounded-xl font-bold transition">重新測驗</button>
+                `;
             }
         }
 
-        function handleNext(s) {
-            score += s;
-            currentStep++;
-            render();
+        function next(idx) {
+            score += questions[current].scores[idx];
+            current++;
+            show();
         }
-
-        function showResult() {
-            const result = results.find(r => score >= r.range[0] && score <= r.range[1]);
-            document.getElementById('quiz-app').innerHTML = `
-                <p class="text-amber-400 font-bold mb-2">你的聚餐人格是...</p>
-                <h1 class="text-3xl font-black mb-4">${result.title}</h1>
-                <div class="p-4 bg-white/10 rounded-lg mb-6 text-sm leading-relaxed">${result.desc}</div>
-                <div class="border-t border-white/20 pt-4">
-                    <p class="text-xs opacity-70">【靈魂飯友配對】</p>
-                    <p class="text-lg font-bold text-pink-400">${result.match}</p>
-                </div>
-                <button onclick="location.reload()" class="mt-8 w-full py-3 bg-amber-500 rounded-full font-bold">重新測驗</button>
-            `;
-        }
-        render();
+        show();
     </script>
 </body>
 </html>
